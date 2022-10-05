@@ -1,34 +1,26 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Injectable } from '@nestjs/common'; // NotFoundException
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
-import { User } from './interfaces/user.interface';
+import { User } from './user.entity';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel('User') private readonly userModel: Model<User>) {}
+  constructor(
+    @InjectRepository(User) private readonly usersRepository: Repository<User>,
+  ) {}
 
   users: CreateUserDto[] = [];
 
-  async create(user: CreateUserDto) {
-    const createdUser = new this.userModel({
-      username: user.username,
-      password: user.password,
-    });
-
-    return await createdUser.save();
+  async create(createUserDto: CreateUserDto): Promise<User> {
+    return await this.usersRepository.save(createUserDto);
   }
 
-  async findAll() {
-    return await this.userModel.find().exec();
+  async findOne(id: string): Promise<User> {
+    return await this.usersRepository.findOne({ where: { id: Number(id) } });
   }
 
-  async findOne(username: string) {
-    const user = await this.userModel.findOne({ username });
-    if (!user) {
-      throw new NotFoundException('Could not find user!');
-    }
-
-    return user;
+  async findAll(): Promise<User[]> {
+    return await this.usersRepository.find();
   }
 }

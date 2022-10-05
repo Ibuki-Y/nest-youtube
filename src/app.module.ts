@@ -1,17 +1,21 @@
-import { ConfigModule } from '@nestjs/config';
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
-import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
   imports: [
     UsersModule,
-    MongooseModule.forRoot(process.env.DATABASE_URL),
-    ConfigModule.forRoot({
-      isGlobal: true,
-      envFilePath: ['.env.development.local'],
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: 'localhost',
+      port: 5432,
+      username: 'root',
+      password: 'secret',
+      database: 'mydb-dev', // 開発用のデータベース名を指定
+      autoLoadEntities: true, // Entityが自動的に読み込まれる
+      synchronize: true, // アプリケーションを起動時に自動でテーブルを作成
     }),
   ],
   controllers: [AppController],

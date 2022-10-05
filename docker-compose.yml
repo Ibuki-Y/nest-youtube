@@ -1,0 +1,25 @@
+version: '3.9'
+# コンテナ
+services:
+  postgres-dev:
+    # postgres:12よりイメージが小さい
+    image: postgres:12-alpine
+    container_name: postgres-dev
+    # 環境変数
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    ports:
+      - 5432:5432
+    # テスト環境
+  postgres-test:
+    image: postgres:12-alpine
+    container_name: postgres-test
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=mydb-test
+    # devコンテナのポートと競合しないようにHOST側のポート番号を1減す
+    ports:
+      - 5431:5432
