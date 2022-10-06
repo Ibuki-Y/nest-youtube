@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { UsersModule } from './users/users.module';
       autoLoadEntities: true, // Entityが自動的に読み込まれる
       synchronize: true, // アプリケーションを起動時に自動でテーブルを作成
     }),
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
