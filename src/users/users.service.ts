@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common'; // NotFoundException
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DeleteResult, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './user.entity';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -22,5 +23,19 @@ export class UsersService {
 
   async findAll(): Promise<User[]> {
     return await this.usersRepository.find();
+  }
+
+  async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
+    const user = await this.usersRepository.findOne({
+      where: { id: Number(id) },
+    });
+    user.username = updateUserDto.username;
+    user.password = updateUserDto.password;
+
+    return this.usersRepository.save(user);
+  }
+
+  async delete(id: string): Promise<DeleteResult> {
+    return await this.usersRepository.delete(id);
   }
 }
